@@ -1,0 +1,400 @@
+=================================================================
+  PATTANA AI — လုပ်နည်းသုံးနည်း လမ်းညွှန်
+  PRD Causal AI Engine v2.0
+  by Myo Min Aung, Yangon, Myanmar
+=================================================================
+
+ဤ application သည် —
+  ✦ PRD Causal Engine ပါဝင်သော AI assistant
+  ✦ Ollama (local LLM) ကို backend အဖြစ်သုံး
+  ✦ Self-learning: conversation ကနေ automatically learn
+  ✦ Web search: internet ကနေ knowledge fetch
+  ✦ Hallucination detection: မသေချာသော answers ကို flag
+  ✦ Gemini-style phone PWA interface
+
+
+=================================================================
+  SECTION 1: REQUIREMENTS (လိုအပ်သောအရာများ)
+=================================================================
+
+  ✓ Windows 10/11 သို့မဟုတ် Mac သို့မဟုတ် Linux PC/Laptop
+  ✓ RAM: 8GB နည်းဆုံး (16GB ဆို ပိုကောင်း)
+  ✓ Storage: 10GB လောက် free space (model များ)
+  ✓ Python 3.9 နှင့်အထက်
+  ✓ Internet (Ollama model download အတွက် တစ်ကြိမ်)
+  ✓ Ollama (free, local AI runner)
+
+
+=================================================================
+  SECTION 2: PYTHON INSTALL
+=================================================================
+
+Python မရှိသေးရင် —
+
+  WINDOWS:
+  1. https://python.org/downloads သွားပါ
+  2. "Download Python 3.x.x" နှိပ်ပါ
+  3. Install မှာ "Add Python to PATH" ✓ အမှတ်ခြစ်ပါ
+  4. Install လုပ်ပါ
+
+  MAC:
+  Terminal ဖွင့်ပြီး:
+    brew install python3
+  (Homebrew မရှိရင်: https://brew.sh)
+
+  LINUX (Ubuntu/Debian):
+    sudo apt update
+    sudo apt install python3 python3-pip
+
+  ── သေချာစစ်ဆေးနည်း ──
+  Terminal/Command Prompt ဖွင့်ပြီး:
+    python --version
+  သို့မဟုတ်:
+    python3 --version
+
+  "Python 3.x.x" ဆိုပြီးထွက်ရမည်။
+
+
+=================================================================
+  SECTION 3: OLLAMA INSTALL
+=================================================================
+
+Ollama သည် PC မှာ AI model run ပေးတဲ့ free software။
+Internet မလိုဘဲ local မှာပဲ run တယ်။
+
+  WINDOWS:
+  1. https://ollama.com/download သွားပါ
+  2. "Download for Windows" နှိပ်ပါ
+  3. Installer ကို run ပါ (OllamaSetup.exe)
+  4. Install ပြီးရင် Ollama icon system tray မှာ ပေါ်မည်
+
+  MAC:
+  1. https://ollama.com/download သွားပါ
+  2. "Download for Mac" နှိပ်ပါ
+  3. Ollama.dmg ဖွင့်ပြီး Applications ထဲ drag ပါ
+
+  LINUX:
+  Terminal မှာ:
+    curl -fsSL https://ollama.com/install.sh | sh
+
+  ── Ollama run ဖို့ ──
+  Terminal/Command Prompt မှာ:
+    ollama serve
+
+  "Listening on 127.0.0.1:11434" ဆိုပြီးပေါ်ရမည်။
+  ဒီ Terminal ကို ပိတ်မထားပါနှင့်။
+
+
+=================================================================
+  SECTION 4: AI MODEL DOWNLOAD
+=================================================================
+
+Ollama serve run နေစဉ် — NEW Terminal ဖွင့်ပြီး:
+
+  ── Option A: Llama 3.2 (Recommended, 2GB) ──
+    ollama pull llama3.2
+
+  ── Option B: Qwen 2.5 3B (ပေါ့သည်, 2GB) ──
+    ollama pull qwen2.5:3b
+
+  ── Option C: DeepSeek R1 (Reasoning, 4.7GB) ──
+    ollama pull deepseek-r1:7b
+
+  ── Option D: Mistral 7B (4.1GB) ──
+    ollama pull mistral
+
+  NOTE: Download size 2-5GB ရှိတယ်။ ကြာနိုင်တယ်။
+  တစ်ကြိမ်သာ download လုပ်ရတယ်၊ ပြီးရင် offline သုံးလို့ရ။
+
+  ── Available models စစ်နည်း ──
+    ollama list
+
+
+=================================================================
+  SECTION 5: PATTANA AI SETUP
+=================================================================
+
+  STEP 5.1 — Zip ကို extract
+  ─────────────────────────────
+  pattana_ai.zip ကို ဖြည်လိုက်ပါ
+  "pattana_ai" folder ရပြီ။
+
+  STEP 5.2 — Python dependencies install
+  ─────────────────────────────────────────
+  Terminal/Command Prompt ဖွင့်ပြီး
+  pattana_ai folder ထဲသွားပါ:
+
+    cd pattana_ai
+
+  Dependencies install:
+    pip install -r requirements.txt
+
+  သို့မဟုတ်:
+    pip3 install -r requirements.txt
+
+  ── Install ဖြစ်မဖြစ် စစ်နည်း ──
+  အောက်ပါ packages တွေ install ဖြစ်ရမည်:
+    fastapi
+    uvicorn
+    httpx
+    numpy
+    pydantic
+
+  STEP 5.3 — Folder structure confirm
+  ──────────────────────────────────────
+  pattana_ai/
+  ├── backend/
+  │   ├── server.py          ← Main server
+  │   ├── prd_engine.py      ← PRD Causal Engine
+  │   └── learning_engine.py ← Self-learning
+  ├── frontend/
+  │   ├── index.html         ← Phone/Web UI
+  │   ├── manifest.json      ← PWA manifest
+  │   └── sw.js              ← Service worker
+  ├── data/                  ← Auto-created (learning data)
+  ├── requirements.txt
+  └── INSTRUCTIONS.txt       ← ဒီဖိုင်
+
+
+=================================================================
+  SECTION 6: APPLICATION RUN
+=================================================================
+
+  ── TERMINAL 1: Ollama ──
+  (ဒါကို ဦးဆုံး run ပြီး ဖွင့်ထားပါ)
+    ollama serve
+
+  ── TERMINAL 2: Pattana AI Server ──
+    cd pattana_ai/backend
+    python server.py
+
+  ── ဒီလို output ပေါ်ရမည် ──
+  ============================================================
+    ✦  Pattana AI Server  v2.0
+  ============================================================
+    PC:    http://localhost:8000
+    Phone: http://192.168.1.xxx:8000
+  ============================================================
+
+  ── BROWSER မှာ ဖွင့်နည်း ──
+  PC:    Chrome မှာ http://localhost:8000 ဖွင့်ပါ
+  PHONE: http://192.168.1.xxx:8000 ဖွင့်ပါ
+         (xxx ကို Terminal ထဲက IP နဲ့ ပြောင်းပါ)
+
+  NOTE: PC နဲ့ Phone တစ်ထဲ WiFi ချိတ်ထားရမည်။
+
+
+=================================================================
+  SECTION 7: PHONE မှာ HOME SCREEN INSTALL
+=================================================================
+
+  ANDROID (Chrome):
+  1. http://192.168.x.x:8000 ဖွင့်ပါ
+  2. Chrome menu (⋮) နှိပ်ပါ
+  3. "Add to Home screen" နှိပ်ပါ
+  4. "Add" နှိပ်ပါ
+  5. Home screen မှာ Pattana AI icon ပေါ်မည်
+
+  iOS (Safari):
+  1. Safari မှာ http://192.168.x.x:8000 ဖွင့်ပါ
+  2. Share button (□↑) နှိပ်ပါ
+  3. "Add to Home Screen" နှိပ်ပါ
+  4. "Add" နှိပ်ပါ
+
+
+=================================================================
+  SECTION 8: APPLICATION သုံးနည်း
+=================================================================
+
+  ── Chat ──
+  • Input box မှာ မေးချင်တာ မေးပါ
+  • Enter နှိပ်ပါ (သို့မဟုတ် ➤ button)
+  • Shift+Enter = new line
+
+  ── PRD Confidence Bar ──
+  AI ဖြေပြီးတိုင်း ပေါ်လာမည်:
+  • Conf: Confidence percentage (HIGH/MEDIUM/LOW)
+  • Hall: Hallucination risk (နည်းသည်ဆိုတာ ကောင်းသည်)
+  • HIGH  = PRD engine မှာ confident
+  • MEDIUM = ဆင်ခြင်ဖြတ်သန်း သုံးပါ
+  • LOW   = Cross-check လုပ်ပါ
+
+  ── Feedback Buttons ──
+  AI ဖြေပြီးတိုင်း 👍 / 👎 button ပေါ်မည်:
+  • 👍 = ကောင်းသောဖြေချက် — PRD engine learn မည်
+  • 👎 = မကောင်းသောဖြေချက် — improve မည်
+  ကြိမ်ကြိမ် feedback ပေးလေ AI ကောင်းလာလေ
+
+  ── Sidebar Menu ──
+  ☰ button နှိပ်ပါ:
+  • Model ရွေးချယ်ပါ (Llama, Qwen, Mistral, etc.)
+  • Server URL ပြောင်းပါ
+  • Memory toggle (on/off)
+  • Web search toggle (on/off)
+  • Learning stats ကြည့်ပါ
+
+  ── Model ပြောင်းနည်း ──
+  ☰ → AI Model → dropdown ကနေ ရွေးပါ
+
+  ── New Conversation ──
+  ☰ → New Conversation နှိပ်ပါ
+  သို့မဟုတ် Input မှာ ✦ button နှိပ်ပါ
+
+
+=================================================================
+  SECTION 9: SELF-LEARNING ဘယ်လိုအလုပ်လုပ်သလဲ
+=================================================================
+
+Pattana AI တွင် features ၃ ခုပါ:
+
+  1. MEMORY BANK
+  ─────────────
+  Conversation တိုင်းကို memory မှာ သိမ်းသည်
+  ✓ Feedback ပေးလေ quality မြင့်လာလေ
+  ✓ အလားတူ မေးခွန်းများ မေးလာသောအခါ past memory
+    ကို context အဖြစ် inject ပြီး ဖြေသည်
+  ✓ Data: pattana_ai/data/memory.json
+
+  2. KNOWLEDGE BASE (Unsupervised Learning)
+  ──────────────────────────────────────────
+  Web မှာ ရှာမတွေ့သော facts များကို auto-cluster လုပ်သည်
+  ✓ Topic detection: science, math, tech, history, etc.
+  ✓ Quality scoring: uses count ပြည့်လေ quality မြင့်လေ
+  ✓ Data: pattana_ai/data/learned_facts.json
+
+  3. WEB SEARCH (Internet Learning)
+  ───────────────────────────────────
+  "What is...", "Who is...", "When did..." စသည့်
+  မေးခွန်းများကို DuckDuckGo မှ real-time ရှာသည်
+  ✓ API key မလိုဘဲ free
+  ✓ Result ကို knowledge base မှာ auto-save
+  ✓ Toggle: Sidebar → Web (on/off)
+
+  4. PRD CAUSAL ANALYSIS
+  ───────────────────────
+  မေးခွန်းနှင့် ဖြေချက်ကို SU(5) relational state
+  vectors အဖြစ် map ပြီး causal coherence စစ်သည်
+  ✓ Hallucination linguistic pattern detection
+  ✓ Confidence: 0.0 – 1.0
+  ✓ Flag: HIGH / MEDIUM / LOW
+
+
+=================================================================
+  SECTION 10: WINDOWS FIREWALL SETTINGS
+=================================================================
+
+Phone ကနေ access ရနိုင်ရန်:
+
+  1. Start → Windows Defender Firewall နှိပ်ပါ
+  2. "Allow an app through firewall" နှိပ်ပါ
+  3. "Change settings" နှိပ်ပါ
+  4. "Allow another app..." နှိပ်ပါ
+  5. Python.exe ရွေးပါ (C:\Users\...\AppData\Local\Programs\Python)
+  6. Private ✓ Public ✓ ခြစ်ပြီး OK
+
+  OR — PowerShell (Admin) မှာ:
+    netsh advfirewall firewall add rule name="Pattana AI" dir=in action=allow protocol=TCP localport=8000
+
+
+=================================================================
+  SECTION 11: TROUBLESHOOTING
+=================================================================
+
+  ❌ "Module not found" error
+  ──────────────────────────
+    pip install -r requirements.txt
+  ဆို run ပါ
+
+  ❌ "Ollama offline" / "Connection refused"
+  ──────────────────────────────────────────
+  Terminal တစ်ခုမှာ:
+    ollama serve
+  ဆို run ထားပါ (ပိတ်မထားပါနှင့်)
+
+  ❌ Model မရှိဘူး
+  ────────────────
+    ollama pull llama3.2
+  ဆို run ပါ
+
+  ❌ Phone ကနေ ချိတ်မရဘူး
+  ──────────────────────────
+  • PC နဲ့ Phone တစ်ထဲ WiFi ထဲ ဆိုင်မှာ ဟုတ်မဟုတ် စစ်ပါ
+  • IP address ကို ပြန်စစ်ပါ
+    Windows: ipconfig
+    Mac/Linux: ifconfig
+  • Firewall ဖွင့်ပေးပါ (Section 10 ကြည့်)
+
+  ❌ Response နှေးတယ်
+  ───────────────────
+  ပေါ့သော model သုံးပါ:
+    ollama pull qwen2.5:3b
+  Sidebar → Model → qwen2.5:3b ရွေးပါ
+
+  ❌ "Port already in use"
+  ─────────────────────────
+  Windows:
+    netstat -ano | findstr :8000
+    taskkill /PID [number] /F
+  Mac/Linux:
+    lsof -ti:8000 | xargs kill
+
+
+=================================================================
+  SECTION 12: ADVANCED USAGE
+=================================================================
+
+  ── Manual Knowledge ထည့်နည်း ──
+  API endpoint:
+    POST http://localhost:8000/api/learn
+    Body: {"content": "your knowledge", "topic": "science"}
+
+  ── Memory ကြည့်နည်း ──
+    GET http://localhost:8000/api/memory
+
+  ── Stats ကြည့်နည်း ──
+    GET http://localhost:8000/api/stats
+
+  ── Memory ဖျက်နည်း ──
+    DELETE http://localhost:8000/api/memory/clear
+
+  ── Environment Variables ──
+  Model ပြောင်းချင်ရင် (server start မတိုင်ခင်):
+    Windows: set OLLAMA_MODEL=mistral
+    Mac/Linux: export OLLAMA_MODEL=mistral
+
+  ── Multiple Models ──
+  Terminal မှာ models ဒါတွေ download လုပ်ထားလို့ရ:
+    ollama pull llama3.2
+    ollama pull qwen2.5:3b
+    ollama pull mistral
+    ollama pull deepseek-r1:7b
+  App ထဲ Sidebar မှာ ရွေးလဲလို့ရ
+
+
+=================================================================
+  QUICK START CHEAT SHEET
+=================================================================
+
+  Terminal 1:    ollama serve
+  Terminal 2:    cd pattana_ai/backend && python server.py
+  Browser/Phone: http://[YOUR-IP]:8000
+
+  ══ Daily use ══
+  1. PC ဖွင့်
+  2. Terminal → ollama serve
+  3. Terminal → python server.py
+  4. Phone မှာ app ဖွင့် (PWA install ထားရင်)
+  5. မေးပါ ✦
+
+
+=================================================================
+  CONTACT / RESEARCH
+=================================================================
+
+  Author:   Myo Min Aung
+  Role:     Independent Researcher
+  Location: Yangon, Myanmar
+  Project:  Pattana-Relational Dynamics (PRD) Causal AI Engine
+  GitHub:   https://github.com/prd-theory/PRD_CausalAI
+
+=================================================================

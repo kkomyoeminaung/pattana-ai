@@ -1,0 +1,18 @@
+{
+  "name": "Pattana AI",
+  "short_name": "Pattana AI",
+  "description": "PRD Causal AI Engine — by Myo Min Aung",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0c0c14",
+  "theme_color": "#0c0c14",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='36' fill='%230c0c14'/><text x='96' y='128' font-size='90' text-anchor='middle' fill='%237c6dfa'>✦</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
